@@ -1,18 +1,19 @@
-const video = document.querySelector('video');
+const video = document.querySelector('.player__video');
 const toggle = document.querySelector('.toggle');
 const progress = document.querySelector('.progress');
 const progressFilled = document.querySelector('.progress__filled');
 const volumeSlider = document.querySelector("input[name='volume']");
 const speedSlider = document.querySelector("input[name='playbackSpeed']");
 const speedBar = document.querySelector('.speed-bar');
-const skipButtons = document.querySelectorAll('[data-skip]');
+const rewindBtn = document.querySelector('.rewind');
+const forwardBtn = document.querySelector('.forward');
 
 function togglePlay() {
   video.paused ? video.play() : video.pause();
 }
 
 function updateButton() {
-  toggle.textContent = video.paused ? '►' : '❚ ❚';
+  toggle.textContent = video.paused ? '►' : '❚❚';
 }
 
 volumeSlider.addEventListener("input", () => {
@@ -24,11 +25,13 @@ speedSlider.addEventListener("input", () => {
   speedBar.textContent = speedSlider.value + "×";
 });
 
-skipButtons.forEach(btn =>
-  btn.addEventListener("click", function () {
-    video.currentTime += parseFloat(this.dataset.skip);
-  })
-);
+rewindBtn.addEventListener("click", () => {
+  video.currentTime -= 10;
+});
+
+forwardBtn.addEventListener("click", () => {
+  video.currentTime += 25;
+});
 
 function handleProgress() {
   const percent = (video.currentTime / video.duration) * 100;
@@ -36,13 +39,12 @@ function handleProgress() {
 }
 
 video.addEventListener("timeupdate", handleProgress);
-
-progress.addEventListener("click", function (e) {
-  const clickPos = (e.offsetX / progress.offsetWidth) * video.duration;
-  video.currentTime = clickPos;
+progress.addEventListener("click", (e) => {
+  const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
+  video.currentTime = scrubTime;
 });
 
-video.addEventListener("click", togglePlay);
 toggle.addEventListener("click", togglePlay);
+video.addEventListener("click", togglePlay);
 video.addEventListener("play", updateButton);
 video.addEventListener("pause", updateButton);
